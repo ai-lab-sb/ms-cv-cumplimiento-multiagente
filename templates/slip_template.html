@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLIP - Comité de Cupos - Seguros Bolívar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #00694e;
+            --gold: #f2a900;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', Arial, sans-serif; color: var(--gray-800); background: #f4f4f2; line-height: 1.6; }
+        .container { max-width: 960px; margin: 0 auto; background: #fff; }
+        .header { text-align: center; padding: 30px 40px 20px; border-bottom: 3px solid var(--gold); }
+        .header img { height: 80px; margin-bottom: 12px; }
+        .header h1 { font-size: 26px; color: var(--green); margin-bottom: 4px; }
+        .header .subtitle { font-size: 16px; color: var(--gray-600); }
+        .section { padding: 30px 40px; border-bottom: 1px solid var(--gray-200); }
+        .section:last-child { border-bottom: none; }
+        .section-header { border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px; }
+        .section-header h2 { font-size: 22px; color: var(--gold); font-weight: 600; }
+        .section-header p { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+        .card { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+        .card h3 { font-size: 16px; color: var(--green); font-weight: 700; margin-bottom: 10px; }
+        .card p { font-size: 14px; color: var(--gray-700); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .grid-full { grid-column: 1 / -1; }
+        .field-label { font-weight: 600; color: var(--gray-800); }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background: var(--gray-200); padding: 8px; text-align: left; font-weight: 600; }
+        td { padding: 8px; border-bottom: 1px solid var(--gray-200); }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .font-mono { font-family: 'Courier New', monospace; }
+        .row-highlight { background: var(--green); color: #fff; }
+        .row-highlight td { font-weight: 700; padding: 10px 8px; border: none; }
+        .row-section { background: var(--gray-200); }
+        .row-section td { font-weight: 700; padding: 8px; }
+        .row-subtotal td { border-top: 2px solid var(--gray-300); font-weight: 600; }
+        .row-total td { border-top: 3px solid var(--gray-600); font-weight: 700; }
+        .calificador-box { border: 2px solid var(--green); border-radius: 8px; overflow: hidden; max-width: 500px; margin: 0 auto 20px; }
+        .calificador-header { display: grid; grid-template-columns: 1fr 1fr; }
+        .calificador-header div { background: var(--gold); color: var(--gray-800); font-weight: 700; text-align: center; padding: 8px; font-size: 12px; }
+        .calificador-body { display: grid; grid-template-columns: 1fr 1fr; min-height: 130px; }
+        .calificador-left { display: flex; flex-direction: column; justify-content: space-between; padding: 16px; border-right: 1px solid var(--gray-200); }
+        .calificador-score { font-size: 48px; font-weight: 700; color: var(--green); text-align: center; }
+        .calificador-detail { font-size: 11px; color: var(--gray-600); }
+        .calificador-detail .row { display: flex; justify-content: space-between; border-top: 1px solid var(--gray-200); padding-top: 4px; margin-top: 4px; }
+        .calificador-right { display: flex; align-items: center; justify-content: center; padding: 16px; }
+        .calificador-cupo { font-size: 28px; font-weight: 700; color: var(--gray-800); }
+        .check-list { list-style: none; }
+        .check-list li { padding: 8px 0; font-size: 14px; display: flex; align-items: center; gap: 10px; }
+        .check-icon { width: 20px; height: 20px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+        .check-on { background: var(--green); color: #fff; }
+        .check-off { background: var(--gray-200); color: var(--gray-500); }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+        .info-grid h4 { font-size: 15px; color: var(--green); font-weight: 600; margin-bottom: 8px; }
+        .info-grid ul { list-style: disc; padding-left: 20px; font-size: 14px; }
+        .info-grid li { margin-bottom: 4px; }
+        .conclusion-card { background: #fefce8; border: 2px solid var(--gold); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+        .conclusion-card h3 { color: var(--green); }
+        .cupo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; text-align: center; }
+        .cupo-grid h4 { font-size: 12px; text-transform: uppercase; color: var(--gray-600); letter-spacing: 1px; font-weight: 600; }
+        .cupo-grid .value { font-size: 24px; font-weight: 700; color: var(--green); margin-top: 4px; }
+        .na { color: var(--gray-500); font-style: italic; }
+        @media print {
+            body { background: #fff; }
+            .container { box-shadow: none; }
+            .section { page-break-inside: avoid; }
+        }
+        @page { size: A4; margin: 15mm; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- ENCABEZADO -->
+    <div class="header">
+        <img src="https://images.seeklogo.com/logo-png/35/2/seguros-bolivar-logo-png_seeklogo-350551.png" alt="Seguros Bolívar" onerror="this.style.display='none'">
+        <h1>Plantilla SLIP para Negocio ante el Comité</h1>
+        <p class="subtitle">Proyecto: {{ resumen_negocio.objeto_contrato | default('Sin definir') | truncate(80, true, '...') }}</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECCIÓN 1: MOTIVO DE LA SOLICITUD              -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="section">
+        <div class="section-header">
+            <h2>1. Motivo de la Solicitud</h2>
+            <p>Motivo principal para la presentación de este negocio ante el comité.</p>
+        </div>
+        <div class="card">
+            <h3>Fecha de Elaboración</h3>
+            <p>{{ fecha_elaboracion | default('—') }}</p>
+        </div>
+        <div class="card">
+            <h3>Motivos</h3>
+            <ul class="check-list">
+                <li>
+                    <span class="check-icon {{ 'check-on' if motivo_solicitud.valor_superior_8000m else 'check-off' }}">{{ '✓' if motivo_solicitud.valor_superior_8000m else '—' }}</span>
+                    Valor del contrato superior a $8.000.000.000
+                </li>
+                <li>
+                    <span class="check-icon {{ 'check-on' if motivo_solicitud.solicitud_facultativa else 'check-off' }}">{{ '✓' if motivo_solicitud.solicitud_facultativa else '—' }}</span>
+                    Solicitud colocación facultativa
+                </li>
+                <li>
+                    <span class="check-icon {{ 'check-on' if motivo_solicitud.aprobacion_cliente_enfoque else 'check-off' }}">{{ '✓' if motivo_solicitud.aprobacion_cliente_enfoque else '—' }}</span>
+                    Aprobación cliente enfoque
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECCIÓN 2: RESUMEN DEL NEGOCIO                 -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="section">
+        <div class="section-header">
+            <h2>2. Resumen del Negocio</h2>
+            <p>Datos clave y partes involucradas en el contrato.</p>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <h3>Partes Involucradas</h3>
+                <p><span class="field-label">Tomador:</span> {{ resumen_negocio.tomador_nombre | default('—') }} {{ '(NIT: ' ~ resumen_negocio.tomador_nit ~ ')' if resumen_negocio.tomador_nit else '' }}</p>
+                <p style="margin-top:8px"><span class="field-label">Asegurado y Beneficiario:</span> {{ resumen_negocio.asegurado_nombre | default('—') }} {{ '(NIT: ' ~ resumen_negocio.asegurado_nit ~ ')' if resumen_negocio.asegurado_nit else '' }}</p>
+            </div>
+            <div class="card">
+                <h3>Detalles del Contrato</h3>
+                <p><span class="field-label">Valor del Contrato:</span> {{ resumen_negocio.valor_contrato | default('—') }}</p>
+                <p style="margin-top:8px"><span class="field-label">Plazo de Ejecución:</span> {{ resumen_negocio.plazo_ejecucion | default('—') }}</p>
+            </div>
+            <div class="card grid-full">
+                <h3>Objeto del Contrato</h3>
+                <p>{{ resumen_negocio.objeto_contrato | default('Información no disponible.') }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECCIÓN 3: ANÁLISIS FINANCIERO                 -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="section">
+        <div class="section-header">
+            <h2>3. Análisis Financiero</h2>
+            <p>Salud financiera del cliente: indicadores clave, comparativa con el sector y desempeño histórico.</p>
+        </div>
+
+        {% if analisis_financiero and analisis_financiero.balance_general is defined %}
+        <div class="grid-2" style="margin-bottom:20px">
+            <!-- Balance General -->
+            <div class="card">
+                <h3 style="text-align:center">Balance General</h3>
+                <table>
+                    <thead><tr>
+                        <th>Concepto</th>
+                        <th class="text-right">{{ analisis_financiero.anio_actual | default('Año Actual') }}</th>
+                        <th class="text-right">{{ analisis_financiero.anio_anterior | default('Año Anterior') }}</th>
+                    </tr></thead>
+                    <tbody>
+                        <tr class="row-section"><td colspan="3">ACTIVO</td></tr>
+                        <tr><td style="padding-left:12px">Total Activo Corriente</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_activo_corriente.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_activo_corriente.anterior | default('$0') }}</td></tr>
+                        <tr><td style="padding-left:12px">Total Activo No Corriente</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_activo_no_corriente.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_activo_no_corriente.anterior | default('$0') }}</td></tr>
+                        <tr class="row-subtotal"><td style="padding-left:12px">Total Activo</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_activo.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_activo.anterior | default('$0') }}</td></tr>
+
+                        <tr class="row-section"><td colspan="3">PASIVO</td></tr>
+                        <tr><td style="padding-left:12px">Total Pasivo Corriente</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_pasivo_corriente.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_pasivo_corriente.anterior | default('$0') }}</td></tr>
+                        <tr><td style="padding-left:12px">Total Pasivo LP</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_pasivo_lp.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_pasivo_lp.anterior | default('$0') }}</td></tr>
+                        <tr class="row-subtotal"><td style="padding-left:12px">Total Pasivo</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_pasivo.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_pasivo.anterior | default('$0') }}</td></tr>
+
+                        <tr class="row-section"><td colspan="3">PATRIMONIO</td></tr>
+                        <tr class="row-subtotal"><td style="padding-left:12px">Total Patrimonio</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_patrimonio.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_patrimonio.anterior | default('$0') }}</td></tr>
+
+                        <tr class="row-highlight"><td style="padding:10px 8px">Total Pasivo y Patrimonio</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_pasivo_patrimonio.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.balance_general.total_pasivo_patrimonio.anterior | default('$0') }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Estado de Resultados -->
+            <div class="card">
+                <h3 style="text-align:center">Estado de Resultados</h3>
+                <table>
+                    <thead><tr>
+                        <th>Concepto</th>
+                        <th class="text-right">{{ analisis_financiero.anio_actual | default('Año Actual') }}</th>
+                        <th class="text-right">{{ analisis_financiero.anio_anterior | default('Año Anterior') }}</th>
+                    </tr></thead>
+                    <tbody>
+                        <tr><td>Ingresos Operacionales</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.ingresos_operacionales.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.ingresos_operacionales.anterior | default('$0') }}</td></tr>
+                        <tr><td>Costos de Ventas</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.costos_ventas.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.costos_ventas.anterior | default('$0') }}</td></tr>
+                        <tr class="row-subtotal"><td>Utilidad Bruta</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.utilidad_bruta.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.utilidad_bruta.anterior | default('$0') }}</td></tr>
+                        <tr><td>Gastos Operacionales</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.gastos_operacionales.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.gastos_operacionales.anterior | default('$0') }}</td></tr>
+                        <tr class="row-subtotal"><td>Utilidad Operacional</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.utilidad_operacional.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.utilidad_operacional.anterior | default('$0') }}</td></tr>
+                        <tr class="row-subtotal"><td>Utilidad Antes de Impuestos</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.utilidad_antes_impuestos.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.utilidad_antes_impuestos.anterior | default('$0') }}</td></tr>
+                        <tr><td>Provisión Impuestos</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.provision_impuestos.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.provision_impuestos.anterior | default('$0') }}</td></tr>
+                        <tr class="row-highlight"><td style="padding:10px 8px">Utilidad (Pérdida) Neta</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.utilidad_neta.actual | default('$0') }}</td><td class="text-right font-mono">{{ analisis_financiero.estado_resultados.utilidad_neta.anterior | default('$0') }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Gráficos Financieros -->
+        {% if grafico_anual_b64 or grafico_sector_b64 %}
+        <div class="card" style="text-align:center">
+            <h3 style="color:var(--gold);margin-bottom:16px">Análisis Financiero Comparativo</h3>
+            {% if grafico_anual_b64 and grafico_sector_b64 %}
+            <div class="grid-2">
+                <div><img src="data:image/png;base64,{{ grafico_anual_b64 }}" alt="Cliente: Año Actual vs Anterior" style="width:100%;max-width:500px;border-radius:6px"></div>
+                <div><img src="data:image/png;base64,{{ grafico_sector_b64 }}" alt="Cliente vs Sector" style="width:100%;max-width:500px;border-radius:6px"></div>
+            </div>
+            {% elif grafico_anual_b64 %}
+            <img src="data:image/png;base64,{{ grafico_anual_b64 }}" alt="Cliente: Año Actual vs Anterior" style="width:100%;max-width:600px;border-radius:6px">
+            {% elif grafico_sector_b64 %}
+            <img src="data:image/png;base64,{{ grafico_sector_b64 }}" alt="Cliente vs Sector" style="width:100%;max-width:600px;border-radius:6px">
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Calificador y Cupo -->
+        {% if analisis_financiero.calificador is defined %}
+        <div class="calificador-box">
+            <div class="calificador-header">
+                <div>CALIFICADOR DE CLIENTES</div>
+                <div>CUPO PROPUESTO</div>
+            </div>
+            <div class="calificador-body">
+                <div class="calificador-left">
+                    <div class="calificador-score">{{ analisis_financiero.calificador.z_score | default('—') }}</div>
+                    <div class="calificador-detail">
+                        <div class="row"><span>SERIEDAD DE LA OFERTA</span><span style="font-weight:600">{{ analisis_financiero.calificador.seriedad_oferta_pct | default('—') }}</span></div>
+                        <div class="row"><span>CUMPLIMIENTO Y AFINES</span><span style="font-weight:600">{{ analisis_financiero.calificador.cumplimiento_afines_pct | default('—') }}</span></div>
+                    </div>
+                </div>
+                <div class="calificador-right">
+                    <span class="calificador-cupo">{{ analisis_financiero.calificador.cupo_propuesto | default('—') }}</span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Indicadores -->
+        <div class="grid-2" style="margin-bottom:20px">
+            <div class="card">
+                <h3 style="text-align:center">Indicadores Financieros Cliente</h3>
+                <table>
+                    <thead><tr><th>Indicador</th><th class="text-right">{{ analisis_financiero.anio_actual | default('Actual') }}</th><th class="text-right">{{ analisis_financiero.anio_anterior | default('Anterior') }}</th></tr></thead>
+                    <tbody>
+                        <tr><td>Razón Corriente</td><td class="text-right font-mono">{{ analisis_financiero.indicadores_cliente.razon_corriente.actual | default('0.00') }}</td><td class="text-right font-mono">{{ analisis_financiero.indicadores_cliente.razon_corriente.anterior | default('0.00') }}</td></tr>
+                        <tr><td>Nivel de Endeudamiento</td><td class="text-right font-mono">{{ analisis_financiero.indicadores_cliente.nivel_endeudamiento.actual | default('0.00%') }}</td><td class="text-right font-mono">{{ analisis_financiero.indicadores_cliente.nivel_endeudamiento.anterior | default('0.00%') }}</td></tr>
+                        <tr><td>Margen EBITDA</td><td class="text-right font-mono">{{ analisis_financiero.indicadores_cliente.margen_ebitda.actual | default('0.00%') }}</td><td class="text-right font-mono">{{ analisis_financiero.indicadores_cliente.margen_ebitda.anterior | default('0.00%') }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card">
+                <h3 style="text-align:center">Indicadores Sector Económico</h3>
+                <table>
+                    <thead><tr><th>Indicador</th><th class="text-right">Valor</th></tr></thead>
+                    <tbody>
+                        <tr><td>Razón Corriente</td><td class="text-right font-mono">{{ analisis_financiero.indicadores_sector.razon_corriente | default('—') }}</td></tr>
+                        <tr><td>Nivel de Endeudamiento</td><td class="text-right font-mono">{{ analisis_financiero.indicadores_sector.nivel_endeudamiento | default('—') }}</td></tr>
+                        <tr><td>Margen EBITDA</td><td class="text-right font-mono">{{ analisis_financiero.indicadores_sector.margen_ebitda | default('—') }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Interpretación -->
+        <div class="card">
+            <h3 style="color:var(--gold)">Interpretación de Indicadores</h3>
+            <p style="margin-top:8px"><span class="field-label">Evolución (vs. Año Anterior):</span> {{ analisis_financiero.interpretacion_evolucion | default('Información no disponible.') }}</p>
+            <p style="margin-top:8px"><span class="field-label">Comparativa (vs. Sector):</span> {{ analisis_financiero.interpretacion_sector | default('Información no disponible.') }}</p>
+        </div>
+
+        <!-- Competencia -->
+        {% if analisis_financiero.competencia is defined and analisis_financiero.competencia %}
+        <div class="card">
+            <h3 style="color:var(--gold)">Análisis de Competencia</h3>
+            <table style="margin-top:12px">
+                <thead><tr>
+                    <th>Nombre de Compañía</th>
+                    <th class="text-right">Total Ingreso Operativo (COP)</th>
+                    <th class="text-right">Margen Neto (%)</th>
+                    <th class="text-right">Ganancia (Pérdida) Neta (COP)</th>
+                    <th class="text-right">Año</th>
+                </tr></thead>
+                <tbody>
+                {% for comp in analisis_financiero.competencia %}
+                    <tr><td>{{ comp.nombre | default('—') }}</td><td class="text-right font-mono">{{ comp.ingreso_operativo | default('$0') }}</td><td class="text-right font-mono">{{ comp.margen_neto | default('0.00%') }}</td><td class="text-right font-mono">{{ comp.ganancia_neta | default('$0') }}</td><td class="text-right">{{ comp.anio | default('—') }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <p style="margin-top:12px"><span class="field-label">Interpretación:</span> {{ analisis_financiero.interpretacion_competencia | default('Información no disponible.') }}</p>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="card"><p class="na">No se proporcionó documento de estados financieros para esta sección.</p></div>
+        {% endif %}
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECCIÓN 4: INFORMACIÓN LEGAL                   -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="section">
+        <div class="section-header">
+            <h2>4. Información Legal</h2>
+            <p>Representación legal, facultades y limitaciones del representante de la sociedad.</p>
+        </div>
+        <div class="card">
+            <h3>Representación Legal</h3>
+            <p>{{ informacion_legal.representante_legal.nombre | default('—') }}
+            {% if informacion_legal.representante_legal is defined and informacion_legal.representante_legal.tipo_documento %}
+                ({{ informacion_legal.representante_legal.tipo_documento }} No. {{ informacion_legal.representante_legal.numero_documento | default('—') }})
+            {% endif %}
+            </p>
+        </div>
+        <div class="card">
+            <h3>Facultades y Limitaciones del Representante Legal</h3>
+            <p>{{ informacion_legal.facultades_limitaciones | default('Información no disponible.') }}</p>
+        </div>
+        {% if informacion_legal.composicion_accionaria is defined and informacion_legal.composicion_accionaria %}
+        <div class="card">
+            <h3>Composición Accionaria</h3>
+            <p>{{ informacion_legal.composicion_accionaria }}</p>
+        </div>
+        {% endif %}
+        {% if informacion_legal.informacion_tributaria is defined %}
+        <div class="card">
+            <h3>Información Tributaria</h3>
+            <p><span class="field-label">Régimen:</span> {{ informacion_legal.informacion_tributaria.regimen | default('—') }}</p>
+            <p><span class="field-label">Actividad Económica:</span> {{ informacion_legal.informacion_tributaria.actividad_economica | default('—') }}</p>
+            <p><span class="field-label">Estado RUT:</span> {{ informacion_legal.informacion_tributaria.estado_rut | default('—') }}</p>
+        </div>
+        {% endif %}
+        {% if informacion_legal.sarlaft is defined %}
+        <div class="card">
+            <h3>SARLAFT</h3>
+            <p><span class="field-label">Estado:</span> {{ informacion_legal.sarlaft.estado | default('—') }}</p>
+            <p><span class="field-label">Fecha Consulta:</span> {{ informacion_legal.sarlaft.fecha_consulta | default('—') }}</p>
+            {% if informacion_legal.sarlaft.observaciones %}<p><span class="field-label">Observaciones:</span> {{ informacion_legal.sarlaft.observaciones }}</p>{% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECCIÓN 5: DETALLES DE LA PÓLIZA               -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="section">
+        <div class="section-header">
+            <h2>5. Detalles de la Póliza</h2>
+            <p>Garantías requeridas para el contrato: amparos, vigencias y valores.</p>
+        </div>
+        <div class="card">
+            <h3>Garantías Requeridas para el Contrato</h3>
+            {% if detalles_poliza.amparos is defined and detalles_poliza.amparos %}
+            <table style="margin-top:12px">
+                <thead><tr><th>Amparo</th><th>Vigencia</th><th>% Valor Contrato</th><th class="text-right">Valor Asegurado</th></tr></thead>
+                <tbody>
+                {% for amparo in detalles_poliza.amparos %}
+                    <tr>
+                        <td>{{ amparo.nombre | default('—') }}</td>
+                        <td>{{ amparo.vigencia | default('—') }}</td>
+                        <td>{{ amparo.porcentaje | default('—') }}</td>
+                        <td class="text-right font-mono">{{ amparo.valor_asegurado | default('$0') }}</td>
+                    </tr>
+                {% endfor %}
+                    <tr class="row-total">
+                        <td>Máxima Exposición</td>
+                        <td colspan="2"></td>
+                        <td class="text-right font-mono">{{ detalles_poliza.maxima_exposicion | default('$0') }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            {% else %}
+            <p class="na">No se identificaron amparos en el documento.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECCIÓN 6: SISCONC                             -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="section">
+        <div class="section-header">
+            <h2>6. Información SISCONC</h2>
+            <p>Exposiciones y siniestros del cliente.</p>
+        </div>
+        {% if sisconc and sisconc.resumen is defined %}
+        <div class="card">
+            <h3>Resumen</h3>
+            <p>{{ sisconc.resumen | default('Información no disponible.') }}</p>
+        </div>
+        {% if sisconc.tiene_siniestros and sisconc.detalle_siniestros %}
+        <div class="card">
+            <h3>Detalle de Siniestros</h3>
+            <table style="margin-top:12px">
+                <thead><tr><th>Aseguradora</th><th>Ramo</th><th>Fecha</th><th class="text-right">Valor Reclamado</th><th>Estado</th></tr></thead>
+                <tbody>
+                {% for s in sisconc.detalle_siniestros %}
+                    <tr><td>{{ s.aseguradora | default('—') }}</td><td>{{ s.ramo | default('—') }}</td><td>{{ s.fecha | default('—') }}</td><td class="text-right font-mono">{{ s.valor_reclamado | default('$0') }}</td><td>{{ s.estado | default('—') }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        {% if sisconc.exposiciones is defined and sisconc.exposiciones %}
+        <div class="card">
+            <h3>Exposiciones</h3>
+            <table style="margin-top:12px">
+                <thead><tr><th>Aseguradora</th><th>Ramo</th><th class="text-right">Valor Asegurado</th><th>Vigencia</th></tr></thead>
+                <tbody>
+                {% for e in sisconc.exposiciones %}
+                    <tr><td>{{ e.aseguradora | default('—') }}</td><td>{{ e.ramo | default('—') }}</td><td class="text-right font-mono">{{ e.valor_asegurado | default('$0') }}</td><td>{{ e.vigencia | default('—') }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="card"><p class="na">No se proporcionó documento SISCONC para esta sección.</p></div>
+        {% endif %}
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECCIÓN 7: CUPO Y CÚMULO                      -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="section">
+        <div class="section-header">
+            <h2>7. Cupo y Cúmulo</h2>
+            <p>Cupo de crédito aprobado y cúmulo asegurado del cliente.</p>
+        </div>
+        {% if cupo_cumulo and (cupo_cumulo.cupo_propuesto is defined or cupo_cumulo.calificador is defined) %}
+        <div class="grid-2">
+            <div class="card">
+                <h3>Cupo Aprobado</h3>
+                <div class="calificador-box" style="margin-top:12px">
+                    <div class="calificador-header">
+                        <div>CALIFICADOR DE CLIENTES</div>
+                        <div>CUPO PROPUESTO</div>
+                    </div>
+                    <div class="calificador-body">
+                        <div class="calificador-left">
+                            <div class="calificador-score">{{ cupo_cumulo.calificador.z_score | default('—') }}</div>
+                            <div class="calificador-detail">
+                                <div class="row"><span>SERIEDAD DE LA OFERTA</span><span style="font-weight:600">{{ cupo_cumulo.calificador.seriedad_oferta_pct | default('—') }}</span></div>
+                                <div class="row"><span>CUMPLIMIENTO Y AFINES</span><span style="font-weight:600">{{ cupo_cumulo.calificador.cumplimiento_afines_pct | default('—') }}</span></div>
+                            </div>
+                        </div>
+                        <div class="calificador-right">
+                            <span class="calificador-cupo">{{ cupo_cumulo.cupo_propuesto | default('—') }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="display:flex;flex-direction:column;justify-content:center">
+                <div class="cupo-grid">
+                    <div>
+                        <h4>Cupo Seguros Bolívar</h4>
+                        <div class="value">{{ cupo_cumulo.cupo_seguros_bolivar | default('—') }}</div>
+                    </div>
+                    <div>
+                        <h4>Cúmulo</h4>
+                        <div class="value">{{ cupo_cumulo.cumulo | default('—') }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if cupo_cumulo.detalle_cumulo is defined and cupo_cumulo.detalle_cumulo %}
+        <div class="card">
+            <h3>Detalle del Cúmulo</h3>
+            <table style="margin-top:12px">
+                <thead><tr><th>Póliza</th><th>Ramo</th><th class="text-right">Valor Asegurado</th><th>Vigencia</th></tr></thead>
+                <tbody>
+                {% for d in cupo_cumulo.detalle_cumulo %}
+                    <tr><td>{{ d.poliza | default('—') }}</td><td>{{ d.ramo | default('—') }}</td><td class="text-right font-mono">{{ d.valor_asegurado | default('$0') }}</td><td>{{ d.vigencia | default('—') }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        {% if cupo_cumulo.observaciones %}
+        <div class="card">
+            <h3>Observaciones</h3>
+            <p>{{ cupo_cumulo.observaciones }}</p>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="card"><p class="na">No se proporcionó documento de cupo y cúmulo para esta sección.</p></div>
+        {% endif %}
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECCIÓN 8: EXPERIENCIA                         -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="section">
+        <div class="section-header">
+            <h2>8. Experiencia del Cliente</h2>
+            <p>Experiencia relevante del cliente en el sector.</p>
+        </div>
+        {% if experiencia and experiencia.analisis_cualitativo is defined %}
+        <div class="card">
+            <p>{{ experiencia.analisis_cualitativo | default('Información no disponible.') }}</p>
+        </div>
+        {% if experiencia.contratos_previos is defined and experiencia.contratos_previos %}
+        <div class="card">
+            <h3>Experiencia Contractual</h3>
+            <table style="margin-top:12px">
+                <thead><tr><th>Contratante</th><th>Objeto del Contrato</th><th class="text-right">Valor (COP/USD)</th><th class="text-right">Fecha Inicio</th></tr></thead>
+                <tbody>
+                {% for c in experiencia.contratos_previos %}
+                    <tr><td>{{ c.contratante | default('—') }}</td><td>{{ c.objeto | default('—') }}</td><td class="text-right font-mono">{{ c.valor | default('$0') }}</td><td class="text-right">{{ c.fecha_inicio | default('—') }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="card"><p class="na">No se proporcionó documento de experiencia para esta sección.</p></div>
+        {% endif %}
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECCIÓN 9: VINCULACIONES                       -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="section">
+        <div class="section-header">
+            <h2>9. Vinculaciones y Referencias</h2>
+            <p>Vinculaciones comerciales y referencias del cliente.</p>
+        </div>
+        {% if vinculaciones and vinculaciones.resumen is defined %}
+        <div class="card">
+            <h3>Resumen</h3>
+            <p>{{ vinculaciones.resumen | default('Información no disponible.') }}</p>
+        </div>
+        {% if vinculaciones.vinculaciones_comerciales is defined and vinculaciones.vinculaciones_comerciales %}
+        <div class="card">
+            <h3>Vinculaciones Comerciales</h3>
+            <table style="margin-top:12px">
+                <thead><tr><th>Empresa Vinculada</th><th>Tipo de Vinculación</th><th>% Participación</th><th>Estado</th></tr></thead>
+                <tbody>
+                {% for v in vinculaciones.vinculaciones_comerciales %}
+                    <tr><td>{{ v.empresa_vinculada | default('—') }}</td><td>{{ v.tipo_vinculacion | default('—') }}</td><td>{{ v.porcentaje_participacion | default('—') }}</td><td>{{ v.estado | default('—') }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        {% if vinculaciones.referencias_bancarias is defined and vinculaciones.referencias_bancarias %}
+        <div class="card">
+            <h3>Referencias Bancarias</h3>
+            <table style="margin-top:12px">
+                <thead><tr><th>Entidad</th><th>Tipo de Producto</th><th>Calificación</th></tr></thead>
+                <tbody>
+                {% for r in vinculaciones.referencias_bancarias %}
+                    <tr><td>{{ r.entidad | default('—') }}</td><td>{{ r.tipo_producto | default('—') }}</td><td>{{ r.calificacion | default('—') }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        {% if vinculaciones.referencias_comerciales is defined and vinculaciones.referencias_comerciales %}
+        <div class="card">
+            <h3>Referencias Comerciales</h3>
+            <table style="margin-top:12px">
+                <thead><tr><th>Empresa</th><th>Relación</th><th>Antigüedad</th></tr></thead>
+                <tbody>
+                {% for r in vinculaciones.referencias_comerciales %}
+                    <tr><td>{{ r.empresa | default('—') }}</td><td>{{ r.relacion | default('—') }}</td><td>{{ r.antiguedad | default('—') }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="card"><p class="na">No se proporcionó documento de vinculaciones para esta sección.</p></div>
+        {% endif %}
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECCIÓN 10: CONCEPTO Y CONCLUSIÓN              -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div class="section">
+        <div class="section-header">
+            <h2>10. Concepto y Conclusión — Director Comercial</h2>
+            <p>Análisis cualitativo del negocio y del cliente, con recomendación sobre viabilidad de expedir la póliza.</p>
+        </div>
+        <div class="card">
+            <h3>Concepto del Negocio</h3>
+            <p>{{ concepto_conclusion.concepto_negocio | default('Sin concepto proporcionado.') }}</p>
+        </div>
+        <div class="card">
+            <h3>Análisis del Cliente</h3>
+            <p>{{ concepto_conclusion.analisis_cliente | default('Sin análisis proporcionado.') }}</p>
+        </div>
+        <div class="conclusion-card">
+            <h3>Conclusión y Recomendación</h3>
+            <p style="margin-top:8px">{{ concepto_conclusion.conclusion | default('Sin conclusión proporcionada.') }}</p>
+        </div>
+        <div class="card">
+            <div class="info-grid">
+                <div>
+                    <h4>Información Sucursal</h4>
+                    <ul>
+                        <li><span class="field-label">Oficina:</span> {{ concepto_conclusion.informacion_sucursal.oficina | default('—') }}</li>
+                        <li><span class="field-label">Localidad:</span> {{ concepto_conclusion.informacion_sucursal.localidad | default('—') }}</li>
+                        <li><span class="field-label">Intermediario:</span> {{ concepto_conclusion.informacion_sucursal.intermediario | default('—') }}</li>
+                        <li><span class="field-label">DC:</span> {{ concepto_conclusion.informacion_sucursal.director_comercial | default('—') }}</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Documentos Adjuntos</h4>
+                    <ul>
+                    {% if archivos_adjuntos %}
+                        {% for archivo in archivos_adjuntos %}
+                        <li>{{ archivo }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="na">Sin documentos listados</li>
+                    {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
